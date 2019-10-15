@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',
+    'verifications.apps.VerificationsConfig',
 ]
 
 MIDDLEWARE = [
@@ -89,16 +90,26 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://114.116.247.86/2",
+        "LOCATION": "redis://114.116.247.86:6379/2",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+             "PASSWORD": "19861026Zy",
         }
     },
     "session": {
             "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": "redis://114.116.247.86/3",
+            "LOCATION": "redis://114.116.247.86:6379/3",
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "PASSWORD": "19861026Zy",
+            }
+    },
+    "verify_codes": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": "redis://114.116.247.86:6379/4",
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "PASSWORD": "19861026Zy",
             }
     }
 }
