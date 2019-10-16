@@ -37,10 +37,6 @@ class SMSCodeView(GenericAPIView):
         sms_code = '%06d' % random.randint(0, 999999)
         # 2：保存验证码，及发送记录 使用redis的pipeline管道，可以一次执行多个命令
         redis_conn = get_redis_connection('verify_codes')
-        # redis_conn = get_redis_connection('verify_codes')
-        # redis_conn.setex('sms_%s' % mobile, constants.SMS_CODE_REDIS_EXPIRES, sms_code)
-        # redis_conn.setex('send_flag_%s' % mobile, constants.SendSMS_CODE_REDIS_EXPIRES, 1)
-
         pl = redis_conn.pipeline()
         pl.setex('sms_%s' % mobile, constants.SMS_CODE_REDIS_EXPIRES, sms_code)
         pl.setex('send_flag_%s' % mobile, constants.SendSMS_CODE_REDIS_EXPIRES, 1)

@@ -18,21 +18,12 @@ var vm = new Vue({
 		allow: false,
 		image_code_id:'',
 		image_code_url:'',
+		sending_flag:'',
+        error_image_code_message:'请填写图片验证码',
+        sms_code_tip:'获取短信验证码',
 	},
 	mounted: function(){
-		// 发起请求,请求图片验证码
-		this.image_code_id = this.generate_uuid();
-		this.image_code_url = "http://127.0.0.1:8000/image_codes/" + this.image_code_id + "/";
-
-		// axios.get("http://127.0.0.1:8000/image_codes/" + this.image_code_id + "/")
-		// 	.then(response => {
-		// 		//200 2xx 会进入then
-		//
-		// 	})
-		// 	.catch(error => {
-		// 		//400 4xx 会进入catch
-		//
-		// 	})
+		this.generate_image_code();
 	},
 	methods: {
 		//生成uuid
@@ -48,6 +39,52 @@ var vm = new Vue({
 			});
 			return uuid;
     	},
+		generate_image_code:function(){
+			// 发起请求,请求图片验证码
+			this.image_code_id = this.generate_uuid();
+			this.image_code_url = "http://127.0.0.1:8000/image_codes/" + this.image_code_id + "/";
+		},
+		//发送短信验证码
+		send_sms_code: function(){
+            if(this.sending_flag == true){
+                    return;
+            }
+            this.sending_flag = true;
+
+            this.check_phone();
+            this.check_image_code();
+
+            if(this.error_phone == true || this.error_image_code == true){
+                this.sending_flag = false;
+                return;
+            }
+
+            axios.get('http://127.0.0.1:8000/sms_codes/' + this.mobile + '/?text=' + this.image_code + '&image_code_id=' + this.image_code_id,{
+                    responseType: 'json'
+                })
+                .then(response => {
+                    var num = 60;
+                    var t = setInterval(() =>{
+                        if(num == 1){
+                            clearInterval(t);
+                            this.sms_code_tip = '获取短信验证码';
+                            this.sending_flag = false;
+                        }else {
+                            num -= 1;
+                            this.sms_code_tip = num + '秒';
+                        }
+                    }, 1000, 50)
+                })
+                .catch(error => {
+                    if(error.response.status == 400){
+                        this.error_image_code_message  = '图片验证码有误';
+                        this.error_image_code = true;
+                    }else {
+                        console.log(error.response.data);
+                    }
+                    this.sending_flag = false;
+                })
+        },
 		check_username: function (){
 			var len = this.username.length;
 			if(len<5||len>20) {
