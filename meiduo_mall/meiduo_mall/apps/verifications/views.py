@@ -1,5 +1,4 @@
 from django.http import HttpResponse
-from django.shortcuts import render
 from rest_framework.views import APIView
 from meiduo_mall.libs.captcha.captcha import captcha
 from django_redis import get_redis_connection
@@ -7,8 +6,8 @@ from . import constants
 from rest_framework.generics import GenericAPIView
 from . import serializers
 import random
-from meiduo_mall.libs.AliSMS.sms import CCP, SMS_SignName, SMS_Template_Code
 from rest_framework.response import Response
+from celery_tasks.sms.tasks import send_sms_code
 
 
 class ImageCodeView(APIView):
@@ -42,8 +41,9 @@ class SMSCodeView(GenericAPIView):
         pl.setex('send_flag_%s' % mobile, constants.SendSMS_CODE_REDIS_EXPIRES, 1)
         # 让管道执行命令
         pl.execute()
-        # 3：发送
-        ccp = CCP()
-        ccp.send_template_sms(mobile, SMS_SignName, SMS_Template_Code, {'code': sms_code})
+
+        # 3：发送 使用celery发布异步任务
+        send_sms_code.delay(mobile, sms_code)
+
         # 4：返回
         return Response({'message': 'OK'})
