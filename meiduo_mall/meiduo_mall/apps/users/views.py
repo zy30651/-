@@ -1,6 +1,9 @@
+from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from meiduo_mall.apps.users.models import User
+
+from . import serializers
+from .models import User
 # Create your views here.
 
 
@@ -28,3 +31,10 @@ class MobileCountView(APIView):
             'count': count
         }
         return Response(data)
+
+
+class UserView(CreateAPIView):
+    """
+    用户注册
+    """
+    serializer_class = serializers.CreateUserSerializers

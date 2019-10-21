@@ -153,6 +153,9 @@ var vm = new Vue({
 						responseType: 'json'
 					})
 					.then(response => {
+						// 清空用户缓存
+						sessionStorage.clear();
+                    	localStorage.clear();
 						// 保存后端返回的token数据
 						localStorage.token = response.data.token;
 						localStorage.username = response.data.username;

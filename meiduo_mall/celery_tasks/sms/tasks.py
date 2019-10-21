@@ -11,7 +11,5 @@ def send_sms_code(mobile, sms_code):
     :return:None
     """
 
-    ccp = CCP()
-    ccp.send_template_sms(mobile, SMS_SignName, SMS_Template_Code, {'code': sms_code})
-
-    pass
+    # ccp = CCP()
+    # ccp.send_template_sms(mobile, SMS_SignName, SMS_Template_Code, {'code': sms_code})
