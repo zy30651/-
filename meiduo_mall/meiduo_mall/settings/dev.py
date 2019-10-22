@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import datetime
 import os
 import sys
-import corsheaders
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -43,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',
     'verifications.apps.VerificationsConfig',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -96,8 +96,8 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://114.116.247.86:6379/2",
         "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-             "PASSWORD": "19861026Zy",
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "PASSWORD": "19861026Zy",
         }
     },
     "session": {
@@ -211,7 +211,7 @@ REST_FRAMEWORK = {
 }
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'user.utils.jwt_response_payload_handler',
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.utils.jwt_response_payload_handler',
 }
 
 
@@ -230,12 +230,3 @@ CORS_ORIGIN_WHITELIST = (
     'http://api.cocsite.cn:8000',
 )
 CORS_ALLOW_CREDENTIALS = True    # 允许携带cookie
-
-# CORS_ALLOW_METHODS = (
-#     'DELETE',
-#     'GET',
-#     'OPTIONS',
-#     'PATCH',
-#     'POST',
-#     'PUT',
-# )

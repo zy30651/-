@@ -27,4 +27,4 @@ def exception_handler(exc, context):
             logger.error('[%s] %s' % (view, exc))
             response = Response({'message': '服务器内部错误'}, status=status.HTTP_507_INSUFFICIENT_STORAGE)
 
-    return
+    return response

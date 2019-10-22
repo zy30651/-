@@ -9,7 +9,7 @@ var vm = new Vue({
         password: '',
         remember: false
     },
-    method: {
+    methods: {
         // 获取url路径参数
         get_query_string: function(name){
             var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
