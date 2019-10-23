@@ -24,6 +24,6 @@ class User(AbstractUser):
         data = {
             'mobile': self.mobile
         }
-        token = serializer.dump(data)
+        token = serializer.dumps(data)
         return token.decode()
 

@@ -54,7 +54,7 @@ class SMSCodeToken(GenericAPIView):
         """
         校验图片验证码是否正确
         :param request:
-        :param account:
+        :par am account:
         :return:
         """
         serializer = self.get_serializer(data=request.query_params)
@@ -69,7 +69,7 @@ class SMSCodeToken(GenericAPIView):
         access_token = user.generate_send_sms_code_token()
 
         # 修改手机号
-        mobile = re.sub(r'(\d{3})\d{4}(\d{4})', r'\1****\3', user.mobile)
+        mobile = re.sub(r'(\d{3})\d{4}(\d{4})', r'\1****\2', user.mobile)
 
         return Response({
             'mobile': mobile,
