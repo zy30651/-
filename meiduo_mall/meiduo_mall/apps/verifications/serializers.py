@@ -40,9 +40,10 @@ class CheckImageCodeSerializer(serializers.Serializer):
             raise serializers.ValidationError('图片验证码错误')
 
         # redis 中发送短信验证码的标志：send_flag_<mobile> : 1 60秒发送过短信，
-        mobile = self.context['view'].kwargs['mobile']
-        send_flag = redis_conn.get('send_flag_%s' % mobile)
-        if send_flag:
-            raise serializers.ValidationError('发送短信次数过于频繁')
+        mobile = self.context['view'].kwargs.get('mobile')
+        if mobile:
+            send_flag = redis_conn.get('send_flag_%s' % mobile)
+            if send_flag:
+                raise serializers.ValidationError('发送短信次数过于频繁')
 
         return attrs
