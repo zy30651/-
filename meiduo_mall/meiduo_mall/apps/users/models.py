@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from itsdangerous import TimedJSONWebSignatureSerializer as TJWSSerializer, BadData
 from django.conf import settings
 # Create your models here.
+from users import constants
 from users.constants import SEND_SMS_CODE_TOKEN_EXPIRES
 
 
@@ -42,3 +43,15 @@ class User(AbstractUser):
         else:
             mobile = data.get('mobile')
             return mobile
+
+    def generate_set_password_token(self):
+        """
+        生成修改密码的token
+        """
+        serializer = TJWSSerializer(settings.SECRET_KEY, expires_in=constants.SET_PASSWORD_TOKEN_EXPIRES)
+        data = {'user_id': self.id}
+        token = serializer.dumps(data)
+        return token.decode()
+
+
+

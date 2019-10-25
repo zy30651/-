@@ -64,8 +64,6 @@ class SMSCodeByToken(GenericAPIView):
         mobile = User.check_send_sms_code(access_token)
         if mobile is None:
             return Response({'message': 'access_token无效'}, status=status.HTTP_400_BAD_REQUEST)
-        # 判断手机号发送次数
-        mobile = self.context['view'].kwargs.get('mobile')
 
         redis_conn = get_redis_connection('verify_codes')
         send_flag = redis_conn.get('send_flag_%s' % mobile)
