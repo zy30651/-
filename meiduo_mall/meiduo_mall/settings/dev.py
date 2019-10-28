@@ -231,3 +231,9 @@ CORS_ORIGIN_WHITELIST = (
     'http://api.cocsite.cn:8000',
 )
 CORS_ALLOW_CREDENTIALS = True    # 允许携带cookie
+
+# QQ登录参数
+QQ_APP_ID = '101812665'
+QQ_APP_KEY = '9774611e5c0f7ae5ab898a723813ff35'
+QQ_APP_REDIRECT_URI = 'http://www.cocsite.cn:8080/oauth_callback.html'
+QQ_STATE = '/'

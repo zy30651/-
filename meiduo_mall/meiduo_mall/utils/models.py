@@ -10,3 +10,4 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True     # 说明是抽象模型类，数据库迁移不生成表
+
