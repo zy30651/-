@@ -1,5 +1,5 @@
 from rest_framework import mixins
-from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveAPIView
+from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -133,6 +133,21 @@ class UserDetailView(RetrieveAPIView):
         :return: user
         """
         return self.request.user
+
+
+class EmailView(UpdateAPIView):
+    """
+    保存邮箱
+    /email/
+    """
+    serializer_class = serializers.EmailSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+    # 第二种实现方式
+    # def get_serializer(self, *args, **kwargs):
+    #     return EmailSerialier(self.request.user, data=self.request.data)
 
 
 

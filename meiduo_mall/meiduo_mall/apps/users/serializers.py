@@ -173,3 +173,25 @@ class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'mobile', 'email', 'email_active')
+
+
+class EmailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'email')
+        extra_kwargs = {
+            'email': {
+                'required': True
+            }
+        }
+
+    def update(self, instance, validated_data):
+        """重写更新方法，添加发送邮件"""
+        email = validated_data['email']
+        instance.email = email
+        instance.save()
+
+        # 发送验证邮件
+
+        return instance
+

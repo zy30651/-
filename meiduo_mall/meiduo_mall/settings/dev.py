@@ -237,3 +237,14 @@ QQ_APP_ID = '101812665'
 QQ_APP_KEY = '9774611e5c0f7ae5ab898a723813ff35'
 QQ_APP_REDIRECT_URI = 'http://www.cocsite.cn:8080/oauth_callback.html'
 QQ_STATE = '/'
+
+# 邮件配置
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.163.com'
+EMAIL_PORT = 25
+# 发送邮件的邮箱
+EMAIL_HOST_USER = 'zy30651@163.com'
+# 在邮箱中设置的客户端授权密码
+EMAIL_HOST_PASSWORD = '19861026zy'
+# 收件人看到的发件人
+EMAIL_FROM = 'cocsite<zy30651@cocsite.cn>'

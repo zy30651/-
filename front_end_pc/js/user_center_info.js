@@ -32,7 +32,7 @@ var vm = new Vue({
                     this.email_active = response.data.email_active;
                 })
                 .catch(error => {
-                    if (error.response.status==401 || error.response.status==403) {
+                    if (error.response.status===401 || error.response.status===403) {
                         location.href = '/login.html?next=/user_center_info.html';
                     }
                 });
