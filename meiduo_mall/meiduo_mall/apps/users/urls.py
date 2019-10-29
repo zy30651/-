@@ -10,5 +10,6 @@ urlpatterns = [
     url(r'^accounts/(?P<account>\w{4,20})/sms/token/$', views.SMSCodeToken.as_view()),   # 获取发送短信验证码
     url(r'^accounts/(?P<account>\w{4,20})/password/token/$', views.PasswordTokenView.as_view()),   # 获取发送短信验证码
     url(r'users/(?P<pk>\d+)/password/$', views.PasswordView.as_view()),     # 重置密码
-    url(r'^user/$', views.UserDetailView.as_view())     # 用户个人中心数据
+    url(r'^user/$', views.UserDetailView.as_view()),     # 用户个人中心数据
+    url(r'^emails/$', views.EmailView.as_view())     # 保存邮箱并发送验证邮件
 ]

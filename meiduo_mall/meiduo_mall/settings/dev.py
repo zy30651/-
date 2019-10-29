@@ -247,4 +247,4 @@ EMAIL_HOST_USER = 'zy30651@163.com'
 # 在邮箱中设置的客户端授权密码
 EMAIL_HOST_PASSWORD = '19861026zy'
 # 收件人看到的发件人
-EMAIL_FROM = 'cocsite<zy30651@cocsite.cn>'
+EMAIL_FROM = 'cocsite<zy30651@163.com>'
