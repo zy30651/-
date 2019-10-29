@@ -73,8 +73,26 @@ class User(AbstractUser):
     def generate_email_verify_url(self):
         """生成邮箱验证链接"""
         serializer = TJWSSerializer(settings.SECRET_KEY, expires_in=constants.EMAIL_VERIFY_TOKEN_EXPIRES)
-        data = {'user_id': self.id}
+        data = {'user_id': self.id, 'email': self.email}
         token = serializer.dumps(data)
         verify_url = 'http://www.cocsite.cn:8080/success_verify_email.html?token='+token.decode()
         return verify_url
+
+    @staticmethod
+    def check_email_verify_token(token):
+        """
+        检查验证邮件的token
+        :return:
+        """
+        serializer = TJWSSerializer(settings.SECRET_KEY, expires_in=constants.EMAIL_VERIFY_TOKEN_EXPIRES)
+
+        try:
+            data = serializer.loads(token)
+        except BadData:
+            return False
+        else:
+            email = data.get('email')
+            user_id = data.get('user_id')
+            User.objects.filter(id=user_id, email=email).update(email_active=True)
+            return True
 

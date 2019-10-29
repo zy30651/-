@@ -197,3 +197,4 @@ class EmailSerializer(serializers.ModelSerializer):
         send_verify_email.delay(email, verify_url)
         return instance
 
+
