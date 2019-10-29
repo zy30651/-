@@ -1,5 +1,5 @@
 from rest_framework import mixins
-from rest_framework.generics import CreateAPIView, GenericAPIView
+from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -8,6 +8,7 @@ from . import serializers
 from .models import User
 from verifications.serializers import CheckImageCodeSerializer
 from .utils import get_user_by_account
+from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
 
@@ -111,3 +112,28 @@ class PasswordView(GenericAPIView, mixins.UpdateModelMixin):
 
     def post(self, request, pk):
         return self.update(request, pk)
+
+
+class UserDetailView(RetrieveAPIView):
+    """
+    用户详情信息
+    /users/<pk>/
+    /user/
+    """
+    serializer_class = serializers.UserDetailSerializer
+    # 补充通过认证后才能访问接口的权限
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        """
+        返回请求用户对象
+        类视图对象中也保存了请求对象request
+        request对象的user属性是通过认证插眼后的请求用户对象
+        类视图对象还有kwargs属性
+        :return: user
+        """
+        return self.request.user
+
+
+
+
