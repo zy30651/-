@@ -11,6 +11,7 @@ class AreasViewSet(CacheResponseMixin, ReadOnlyModelViewSet):
     retrieve：返回特定省或市的下属行政区
     """
     # queryset = Area.objects.all()
+    pagination_class = None  # 区划信息不分页
 
     def get_queryset(self):
         if self.action == 'list':
