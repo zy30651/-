@@ -12,12 +12,13 @@ class FastDFSStorage(Storage):
         if base_url is None:
             base_url = settings.FDFS_URL
         self.base_url = base_url
+
         if client_conf:
             self.client_conf = settings.FDFS_CLIENT_CONF
         self.client_conf = client_conf
 
-    def _open(self, name, mode='rb'):
-        """目前只用来保存，暂不需要打开，所以省略"""
+    # def _open(self, name, mode='rb'):
+    #     """目前只用来保存，暂不需要打开，所以省略"""
         pass
 
     def _save(self, name, content):

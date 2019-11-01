@@ -1,5 +1,5 @@
 from meiduo_mall.utils.models import BaseModel
-from django.db  import models
+from django.db import models
 
 
 class ContentCategory(BaseModel):
