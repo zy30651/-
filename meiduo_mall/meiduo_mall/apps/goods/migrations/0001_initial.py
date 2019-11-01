@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
+import ckeditor.fields
+import ckeditor_uploader.fields
 
 
 class Migration(migrations.Migration):
@@ -40,6 +42,9 @@ class Migration(migrations.Migration):
                 ('sales', models.IntegerField(default=0, verbose_name='销量')),
                 ('comments', models.IntegerField(default=0, verbose_name='评价数')),
                 ('brand', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='goods.Brand', verbose_name='品牌')),
+                ('desc_detail', ckeditor_uploader.fields.RichTextUploadingField(default='', verbose_name='详细介绍')),
+                ('desc_pack', ckeditor.fields.RichTextField(default='', verbose_name='包装信息')),
+                ('desc_service', ckeditor_uploader.fields.RichTextUploadingField(default='', verbose_name='售后服务')),
             ],
             options={
                 'verbose_name': '商品',
