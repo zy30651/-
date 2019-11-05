@@ -1,3 +1,5 @@
+set SESSION sql_mode='';
+
 DROP TABLE IF EXISTS `tb_content`;
 DROP TABLE IF EXISTS `tb_content_category`;
 DROP TABLE IF EXISTS `tb_sku_specification`;
