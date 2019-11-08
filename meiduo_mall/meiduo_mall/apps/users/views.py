@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.viewsets import GenericViewSet
 import re
 from . import serializers, constants
 from .models import User
@@ -168,7 +169,7 @@ class EmailVerifyView(APIView):
             return Response({'message': '链接信息无效'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AddressViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, GenericAPIView):
+class AddressViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, GenericViewSet):
     """
     用户地址新增与修改
     """
