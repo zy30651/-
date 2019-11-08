@@ -1,3 +1,4 @@
+from django_redis import get_redis_connection
 from rest_framework import mixins
 from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.response import Response
@@ -6,6 +7,9 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.viewsets import GenericViewSet
 import re
+
+from goods.models import SKU
+from goods.serializers import SKUSerializer
 from . import serializers, constants
 from .models import User
 from verifications.serializers import CheckImageCodeSerializer
@@ -247,6 +251,25 @@ class UserHistoryView(mixins.CreateModelMixin, GenericAPIView):
     def post(self, request):
         """保存"""
         return self.create(request)
+
+    # serializer_class =
+    def get(self, request):
+        # 查询redis数据库
+        user_id = request.user.id
+        redis_conn = get_redis_connection('history')
+        sku_id_list = redis_conn.lrange('history_%s' % user_id, 0, constants.USER_BROWSING_HISTORY_COUNTS_LIMIT-1)
+
+        # 根据redis返回的sku_id查询数据库
+        # SKU.objects.filter(id__in=sku_id_list) # 使用__in可以查，但是查询后数据库会被打乱,会按照数据库的顺序查询出来
+        sku_list = []
+        for sku_id in sku_id_list:
+            sku = SKU.objects.get(id=sku_id)
+            sku_list.append(sku)
+
+        # 使用序列化器序列化
+        s = SKUSerializer(sku_list, many=True)
+        return Response(s.data)
+
 
 
 
