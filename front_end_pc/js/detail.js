@@ -82,7 +82,23 @@ var vm = new Vue({
         },
         // 添加购物车
         add_cart: function(){
-
+                axios.post(this.host+'/cart/', {
+                    sku_id: parseInt(this.sku_id),
+                    count: this.sku_count
+                }, {
+                    headers: {
+                        'Authorization': 'JWT ' + this.token
+                    },
+                    responseType: 'json',
+                    withCredentials: true  // 跨域使用
+                })
+                    .then(response => {
+                        this.cart_total_count += response.data.count;
+                    })
+                    .catch(error => {
+                        alert(error.response.message[0]);
+                        console.log(error.response.data);
+                    })
         },
         // 获取购物车数据
         get_cart: function(){
@@ -90,18 +106,18 @@ var vm = new Vue({
         },
         // 获取热销商品数据
         get_hot_goods: function(){
-            axios.get(this.host+'/categories/'+this.cat+'/hotskus/', {
+                axios.get(this.host+'/categories/'+this.cat+'/hotskus/', {
                     responseType: 'json'
                 })
-                .then(response => {
-                    this.hots = response.data;
-                    for(var i=0; i<this.hots.length; i++){
-                        this.hots[i].url = '/goods/' + this.hots[i].id + '.html';
-                    }
-                })
-                .catch(error => {
-                    console.log(error.response.data);
-                })
+                    .then(response => {
+                        this.hots = response.data;
+                        for(var i=0; i<this.hots.length; i++){
+                            this.hots[i].url = '/goods/' + this.hots[i].id + '.html';
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error.response.data);
+                    })
         },
         // 获取商品评价信息
         get_comments: function(){

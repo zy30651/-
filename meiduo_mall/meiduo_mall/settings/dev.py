@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'oauth.apps.OauthConfig',
     'areas.apps.AreasConfig',
     'goods.apps.GoodsConfig',
+    'carts.apps.CartsConfig',
     'contents.apps.ContentsConfig',
     'verifications.apps.VerificationsConfig',
     'rest_framework',
@@ -51,7 +52,6 @@ INSTALLED_APPS = [
     'ckeditor',  # 富文本编辑器
     'ckeditor_uploader',  # 富文本编辑器上传图片模块
     'haystack',
-
 ]
 
 MIDDLEWARE = [
@@ -128,6 +128,14 @@ CACHES = {
     "history": {
             "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": "redis://114.116.247.86:6379/5",
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "PASSWORD": "19861026Zy",
+            }
+    },
+    "cart": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": "redis://114.116.247.86:6379/6",
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
                 "PASSWORD": "19861026Zy",
