@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 # Create your views here.
-from .serializers import CartSerializer, CartSKUSerializer
+from .serializers import CartSerializer, CartSKUSerializer, CartDeleteSerializer
 from goods.models import SKU
 
 
@@ -166,5 +166,38 @@ class CartView(APIView):
             response.set_cookie('cart', cookie_cart)
             return response
 
-    # def delete(self):
-    #     pass
+    def delete(self, request):
+        """删除商品"""
+        # 检查参数sku_id
+
+        serializer = CartDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        sku_id = serializer.validated_data['sku_id']
+        # 判断用户登录状态
+
+        try:
+            user = request.user
+        except Exception:
+            # 前端携带了错误JWT token，用户未登录
+            user = None
+
+        if user is not None and user.is_authenticated:
+            redis_conn = get_redis_connection('cart')
+            pl = redis_conn.pipeline()
+            pl.hdel('cart_%s' % user.id, sku_id)
+            pl.srem('cart_selected_%s' % user.id, sku_id)
+            pl.execute()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            cart_str = request.COOKIES.get('cart')
+            if cart_str:
+                cart_dict = pickle.loads(base64.b64decode(cart_str.encode()))
+            else:
+                cart_dict = {}
+
+            response = Response(serializer.data)  # 不设置状态码，默认200
+            if sku_id in cart_dict:
+                del cart_dict[sku_id]
+                cookie_cart = base64.b64encode(pickle.dumps(cart_dict)).decode()
+                response.set_cookie('cart', cookie_cart)
+            return response
