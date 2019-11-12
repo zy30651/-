@@ -73,7 +73,7 @@ var vm = new Vue({
                 this.update_count(index, count);
             }
         },
-        on_add: function( index){
+        on_add: function(index){
             var count = this.cart[index].count + 1;
             this.update_count(index, count);
         },

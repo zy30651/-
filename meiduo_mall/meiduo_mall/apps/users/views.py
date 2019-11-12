@@ -272,17 +272,19 @@ class UserHistoryView(mixins.CreateModelMixin, GenericAPIView):
         return Response(s.data)
 
 
-class UserAuthorizeView(ObtainJSONWebToken):
-    """
-    用户认证
-    """
-    def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
+class UserAuthorizationView(ObtainJSONWebToken):
 
+    def post(self, request):
+        # 调用jwt扩展的方法，对用户登录的数据进行验证
+        response = super().post(request)
+
+        # 如果用户登录成功，进行购物车数据合并
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            user = serializer.validated_data.get('user') or request.user
-            response = merge_cart_cookie_to_redis(request, user, response)
+            # 表示用户登录成功
+            user = serializer.validated_data.get("user")
+            # 合并购物车
+            response = merge_cart_cookie_to_redis(request, response, user)
 
         return response
 
