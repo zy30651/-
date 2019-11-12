@@ -12,7 +12,7 @@ def merge_cart_cookie_to_redis(request, response, user):
     # 从cookie中取出购物车数据
     cart_str = request.COOKIES.get('cart')
     if not cart_str:
-        return
+        return response
 
     cookie_cart = pickle.loads(base64.b64decode(cart_str.encode()))
 

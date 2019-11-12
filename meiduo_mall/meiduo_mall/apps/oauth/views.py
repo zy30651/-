@@ -70,6 +70,16 @@ class OAuthQQUserView(GenericAPIView):
 
             payload = jwt_payload_handler(user)
             token = jwt_encode_handler(payload)
+
+            # 视频没看到
+            # response = Response({
+            #     'token': token,
+            #     'username': user.username,
+            #     'user_id': user.id
+            # })
+            # # 合并购物车
+            # response = merge_cart_cookie_to_redis(request, user, response)
+            # return response
             return Response({
                 'token': token,
                 'username': user.username,
@@ -91,6 +101,15 @@ class OAuthQQUserView(GenericAPIView):
         payload = jwt_payload_handler(user)
         token = jwt_encode_handler(payload)
 
+        # 视频没看到
+        # response = Response({
+        #     'token': token,
+        #     'username': user.username,
+        #     'user_id': user.id
+        # })
+        # # 合并购物车
+        # response = merge_cart_cookie_to_redis(request, user, response)
+        # return response
         return Response({
             'token': token,
             'username': user.username,

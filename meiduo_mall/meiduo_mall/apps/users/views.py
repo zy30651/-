@@ -8,6 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import GenericViewSet
 import re
 
+from carts.utils import merge_cart_cookie_to_redis
 from goods.models import SKU
 from goods.serializers import SKUSerializer
 from . import serializers, constants
@@ -15,7 +16,7 @@ from .models import User
 from verifications.serializers import CheckImageCodeSerializer
 from .utils import get_user_by_account
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework_jwt.views import ObtainJSONWebToken
 # Create your views here.
 
 
@@ -269,6 +270,21 @@ class UserHistoryView(mixins.CreateModelMixin, GenericAPIView):
         # 使用序列化器序列化
         s = SKUSerializer(sku_list, many=True)
         return Response(s.data)
+
+
+class UserAuthorizeView(ObtainJSONWebToken):
+    """
+    用户认证
+    """
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.validated_data.get('user') or request.user
+            response = merge_cart_cookie_to_redis(request, user, response)
+
+        return response
 
 
 
