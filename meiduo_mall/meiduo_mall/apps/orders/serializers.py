@@ -55,7 +55,10 @@ class SaveOrderSerializer(serializers.ModelSerializer):
         # time.time是时间戳，从1970年开始的秒数
         # time.datetime
         # django.utils import timezone  返回当前的时区的时间
-        order_id = timezone.now().strftime('%Y%m%d%H%M%S') + ('%9d' % user.id)
+        order_id = timezone.now().strftime('%Y%m%d%H%M%S') + ('%09d' % user.id)
+
+        address = validated_data['address']
+        pay_method = validated_data['pay_method']
 
         with transaction.atomic():
             # 创建一个保存点
@@ -65,11 +68,11 @@ class SaveOrderSerializer(serializers.ModelSerializer):
                 order = OrderInfo.objects.create(
                     order_id=order_id,
                     user=user,
-                    address=validated_data['address'],
+                    address=address,
                     total_count=0,
                     total_amount=Decimal(0),
                     freight=Decimal(10),
-                    pay_method=validated_data['pay_method'],
+                    pay_method=pay_method,
                     status=OrderInfo.ORDER_STATUS_ENUM['UNSEND']
                     if validated_data['pay_method'] == OrderInfo.PAY_METHODS_ENUM['CASH']
                     else OrderInfo.ORDER_STATUS_ENUM['UNPAID']
@@ -85,44 +88,51 @@ class SaveOrderSerializer(serializers.ModelSerializer):
                 for sku_id in cart_selected:
                     cart[int(sku_id)] = int(redis_cart[sku_id])
 
-                total_amount = Decimal('0')
-                total_count = 0
+                sku_id_list = cart.keys()
+                # skus = SKU.objects.filter(id__in=cart.keys())
 
-                skus = SKU.objects.filter(id__in=cart.keys())
+                for sku_id in sku_id_list:
+                    while True:
+                        sku = SKU.objects.get(id=sku_id)
+                        # 判断商品库存是否充足
+                        count = cart[sku.id]
+                        origin_stock = sku.stock
+                        origin_sales = sku.sales
 
-                for sku in skus:
-                    # 判断商品库存是否充足
-                    sku_count = cart[sku.id]
+                        if sku.stock < count:
+                            # 事务回滚
+                            transaction.savepoint_rollback(save_id)
+                            raise serializers.ValidationError({'detail': '商品库存不足'})
 
-                    if sku.stock < sku_count:
-                        # 事务回滚
-                        transaction.savepoint_rollback(save_id)
-                        raise serializers.ValidationError({'detail': '商品库存不足'})
+                        # 常规操作，每秒单数多时，会造成超量出售
+                        # sku.stock -= count
+                        # sku.sales -= count
+                        #
+                        # sku.save()
+                        new_stock = origin_stock - count
+                        new_sales = origin_sales + count
+                        # 乐观锁
+                        ret = SKU.objects.filter(id=sku.id, stock=origin_stock).update(stock=new_stock, sales=new_sales)
+                        if ret == 0:
+                            continue
 
-                    sku.stock -= sku_count
-                    sku.sales -= sku_count
+                        order.total_count += count
+                        order.total_amount += (sku.price * count)
 
-                    sku.save()
+                        # 保存到OrderGoods
+                        OrderGoods.objects.create(
+                            order=order,
+                            sku=sku,
+                            count=count,
+                            price=sku.price,
+                        )
+                        break
 
-                    total_amount += sku.price * sku_count
-                    total_count += sku_count
-
-                    # 保存到OrderGoods
-                    OrderGoods.objects.create(
-                        order=order,
-                        sku=sku,
-                        count=sku_count,
-                        price=sku.price,
-                    )
-
-                # 更新订单的金额数量信息
-                order.total_amount = total_amount
-                order.total_amount += order.freight
-                order.total_count = total_count
                 order.save()
 
             except ValidationError:
                 raise
+
             except Exception as e:
                 transaction.savepoint_rollback(save_id)
                 raise APIException('保存订单失败')
