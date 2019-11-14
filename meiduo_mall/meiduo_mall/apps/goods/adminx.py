@@ -1,9 +1,4 @@
 import xadmin
-# Register your models here.
-
-from . import models
-
-import xadmin
 from xadmin import views
 
 from . import models
@@ -28,14 +23,21 @@ class GlobalSettings(object):
 xadmin.site.register(views.CommAdminView, GlobalSettings)
 
 
-# class SKUAdmin(admin.ModelAdmin):
-#     def save_model(self, request, obj, form, change):
-#         obj.save()
-#         from celery_tasks.html.tasks import generate_static_sku_detail_html
-#         generate_static_sku_detail_html.delay(obj.id)
-#
-#
-# class SKUSpecificationAdmin(admin.ModelAdmin):
+class SKUAdmin(object):
+    model_icon = 'fa fa-gift'
+    list_display = ['id', 'name', 'price', 'stock', 'sales', 'comments']
+    search_fields = ['id', 'name']
+    list_filter = ['category']
+    list_editable = ['price', 'stock']
+    show_detail_fields = ['name']
+    list_export = ['xls', 'csv', 'xml']
+    readonly_fields = ['sales', 'comments']
+
+
+xadmin.site.register(models.SKU, SKUAdmin)
+
+
+class SKUSpecificationAdmin(object):
 #     def save_model(self, request, obj, form, change):
 #         obj.save()
 #         from celery_tasks.html.tasks import generate_static_sku_detail_html
@@ -46,8 +48,30 @@ xadmin.site.register(views.CommAdminView, GlobalSettings)
 #         obj.delete()
 #         from celery_tasks.html.tasks import generate_static_sku_detail_html
 #         generate_static_sku_detail_html.delay(sku_id)
-#
-#
+
+    def save_models(self):
+        # 保存数据对象
+        obj = self.new_obj
+        obj.save()
+
+        # 补充自定义行为
+        from celery_tasks.html.tasks import generate_static_sku_detail_html
+        generate_static_sku_detail_html.delay(obj.sku.id)
+
+    def delete_model(self):
+        # 删除数据对象
+        obj = self.obj
+        sku_id = obj.sku.id
+        obj.delete()
+
+        # 补充自定义行为
+        from celery_tasks.html.tasks import generate_static_sku_detail_html
+        generate_static_sku_detail_html.delay(sku_id)
+
+
+xadmin.site.register(models.SKUSpecification, SKUSpecificationAdmin)
+
+
 # class SKUImageAdmin(admin.ModelAdmin):
 #     def save_model(self, request, obj, form, change):
 #         obj.save()
@@ -80,12 +104,11 @@ xadmin.site.register(views.CommAdminView, GlobalSettings)
 #         generate_static_list_search_html.delay()
 
 
+# xadmin.site.register()
 xadmin.site.register(models.GoodsCategory)
 xadmin.site.register(models.GoodsChannel)
 xadmin.site.register(models.Goods)
 xadmin.site.register(models.Brand)
 xadmin.site.register(models.GoodsSpecification)
 xadmin.site.register(models.SpecificationOption)
-xadmin.site.register(models.SKU)
-xadmin.site.register(models.SKUSpecification)
 xadmin.site.register(models.SKUImage)
