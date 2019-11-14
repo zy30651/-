@@ -25,7 +25,7 @@ class PaymentView(APIView):
 
         # 根据订单的数据，向支付宝发起请求，获取支付连接的参数
         alipay = AliPay(
-            appid=settings.ALIPAY_APPID,
+            appid=settings.ALIPAY_DEV_APPID,
             app_notify_url=None,  # 默认回调url
             app_private_key_path=os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                                 'keys/app_private_key.pem'),
@@ -44,11 +44,11 @@ class PaymentView(APIView):
         )
 
         # 拼接连接返回前端
-        alipay_url = settings.ALIPAY_URL + "?" + order_string
+        alipay_url = settings.ALIPAY_DEV_URL + "?" + order_string
 
         return Response({'alipay_url': alipay_url}, status=status.HTTP_201_CREATED)
-
-
+# 7576    7530.54
+# 99999   92423.00
 class PaymentStatusView(APIView):
     """
     支付结果
@@ -65,7 +65,7 @@ class PaymentStatusView(APIView):
         signature = data.pop("sign")
 
         alipay_client = AliPay(
-            appid=settings.ALIPAY_APPID,
+            appid=settings.ALIPAY_DEV_APPID,
             app_notify_url=None,  # 默认回调url
             app_private_key_path=os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                               'keys/app_private_key.pem'),
