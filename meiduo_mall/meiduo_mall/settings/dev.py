@@ -54,6 +54,9 @@ INSTALLED_APPS = [
     'ckeditor',  # 富文本编辑器
     'ckeditor_uploader',  # 富文本编辑器上传图片模块
     'haystack',
+    'xadmin',           # 必须安装下面3个应用
+    'crispy_forms',     # 表单导出系统
+    'reversion',    # 版本追踪系统
 ]
 
 MIDDLEWARE = [
