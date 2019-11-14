@@ -38,17 +38,6 @@ xadmin.site.register(models.SKU, SKUAdmin)
 
 
 class SKUSpecificationAdmin(object):
-#     def save_model(self, request, obj, form, change):
-#         obj.save()
-#         from celery_tasks.html.tasks import generate_static_sku_detail_html
-#         generate_static_sku_detail_html.delay(obj.sku.id)
-#
-#     def delete_model(self, request, obj):
-#         sku_id = obj.sku.id
-#         obj.delete()
-#         from celery_tasks.html.tasks import generate_static_sku_detail_html
-#         generate_static_sku_detail_html.delay(sku_id)
-
     def save_models(self):
         # 保存数据对象
         obj = self.new_obj
